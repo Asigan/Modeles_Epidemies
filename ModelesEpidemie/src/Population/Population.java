@@ -5,20 +5,35 @@ import java.util.List;
 
 public class Population {
 	private List<List<Personne>> population= new ArrayList<List<Personne>>();
+	
 	public Population(int[] popQte) {
+		
 		for(int i=0; i<popQte.length;i++) {
 			population.add(new ArrayList<Personne>());
 			for(int j=0; j<popQte[i]; j++) {
 				population.get(i).add(new Personne());
 			}
 		}
+		
 	}
-	public void ChangePop(int i, int j) throws CustomPopException {
+	public void changePop(int categorieSourceIndex, int personneIndex) throws CustomPopException {
+		
 		try {
-			List<Personne> pop = this.getPop(i);
-			Personne p = pop.get(j);
-			this.getPop(i+1).add(p);
-			pop.remove(j);
+			changePop(categorieSourceIndex, categorieSourceIndex+1, personneIndex);
+		}
+		
+		catch(CustomPopException e) {
+			throw new CustomPopException(e.getMessage(), e);
+		}
+		
+	}
+	public void changePop(int categorieSourceIndex, int categorieCibleIndex, int personneIndex) throws CustomPopException {
+		
+		try {
+			List<Personne> pop = this.getPop(categorieSourceIndex);
+			Personne p = pop.get(personneIndex);
+			this.getPop(categorieCibleIndex).add(p);
+			pop.remove(personneIndex);
 		}
 		
 		catch(CustomPopException e) {
@@ -26,15 +41,15 @@ public class Population {
 		}
 		
 		catch(Exception e) {
-			throw new CustomPopException("Index "+ j +" doesn't match with a person in category "+i, e);
+			throw new CustomPopException("Index "+ personneIndex +" doesn't match with a person in category "+ categorieSourceIndex, e);
 		}
 		
 	}
-	public void meurt(int i, int j) throws CustomPopException{
+	public void meurt(int categorieIndex, int personneIndex) throws CustomPopException{
 		
 		try {
-			List<Personne> pop = this.getPop(i);
-			pop.remove(j);
+			List<Personne> pop = this.getPop(categorieIndex);
+			pop.remove(personneIndex);
 		}
 		
 		catch(CustomPopException e) {
@@ -42,7 +57,7 @@ public class Population {
 		}
 		
 		catch(Exception e) {
-			throw new CustomPopException("Index "+ j +" doesn't match with a person in category "+i, e);
+			throw new CustomPopException("Index "+ personneIndex +" doesn't match with a person in category "+categorieIndex, e);
 		}
 		
 	}

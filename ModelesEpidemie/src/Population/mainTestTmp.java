@@ -10,7 +10,7 @@ public class mainTestTmp {
 		try {
 			pops.nait();
 			pops.meurt(1, 1);
-			pops.ChangePop(0, 520);
+			pops.changePop(0, 520);
 			System.out.println(pops.getPop(0).size());
 		}
 		catch(CustomPopException e) {
