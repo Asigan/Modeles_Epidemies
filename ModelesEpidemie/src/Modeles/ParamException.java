@@ -1,6 +1,6 @@
 package Modeles;
 
-public class ParamException extends Exception {
+public class ParamException extends RuntimeException {
 	public ParamException(String message, Throwable err) {
 		super(message, err);
 	}
