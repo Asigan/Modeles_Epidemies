@@ -1,12 +1,14 @@
 package Modeles;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 public class Parametres {
 	
-	static protected enum typesVariables{
+	static public enum typesVariables{
 		Integer,
 		Coeff,
 		Pourcentage,
@@ -17,7 +19,7 @@ public class Parametres {
 	protected GestionFichier gfile;
 	
 	private static Parametres instance = null;
-	static Parametres getInstance() {
+	public static Parametres getInstance() {
 		if(instance==null) {
 			instance = new Parametres();
 		}
@@ -59,8 +61,8 @@ public class Parametres {
 		gfile.genererFichier(cheminFichier, false);
 	}
 	
-	public void setParametresConsole() {
-		
+	public void setParametresAvecFichier(String cheminFichier) throws ParamException{
+		gfile.extraireParam(cheminFichier);
 	}
 	protected class GestionFichier {
 		protected final String[] keys = new String[] {"S0","I0","R0","Taille du monde","Beta","Gamma","Alpha","Proportion de Naissances",
@@ -140,6 +142,96 @@ public class Parametres {
 				bw.write(contenu);
 				bw.close();
 			}
+		}
+		void extraireParam(String cheminFichier) throws ParamException{
+			BufferedReader fichierSource=null;
+			try {
+				fichierSource = new BufferedReader(new FileReader(cheminFichier));
+				String line="";
+				for(String key: keys) {
+					while(!line.startsWith(key)) {
+						line = fichierSource.readLine();
+						if(line==null) {
+							throw new ParamException("Le fichier de paramètres a été corrompu: la variable "+key+" n'a pas pu être trouvée");
+						}
+					}
+					String[] l = line.split(":"); 
+					if(l.length<2) {
+						throw new ParamException("La ligne commençant par "+key+" ne contient pas de valeur");
+					}
+					l[1]=l[1].trim();
+					switch(dictType.get(key)) {
+					case Integer:
+						try {
+							dict.replace(key, (double)Integer.parseInt(l[1]));
+						}
+						catch(NumberFormatException nfe){
+							throw new ParamException("La ligne commençant par "+key+" devrait contenir une valeur entière", nfe);
+						}
+						break;
+					case Coeff:
+						Double valeur = null;
+						try {
+							valeur = Double.parseDouble(l[1]);
+						}
+						catch(NumberFormatException nfe){
+							throw new ParamException("La ligne commençant par "+key+" devrait contenir une valeur décimale", nfe);
+						}
+						
+						if(valeur!=null) {
+							if(valeur>=0.0 && valeur<=1.0) {
+								dict.replace(key, valeur);
+							}
+							else {
+								throw new ParamException("La ligne commençant par "+key+" devrait contenir une valeur décimale comprise entre 0 et 1");
+							}
+						}
+
+						break;
+					case Pourcentage:
+						Double valeurPourcentage = null;
+						try {
+							valeurPourcentage = Double.parseDouble(l[1]);
+						}
+						catch(NumberFormatException nfe){
+							throw new ParamException("La ligne commençant par "+key+" devrait contenir une valeur décimale", nfe);
+						}
+						
+						if(valeurPourcentage!=null) {
+							if(valeurPourcentage>=0.0 && valeurPourcentage<=100.0) {
+								dict.replace(key, valeurPourcentage);
+							}
+							else {
+								throw new ParamException("La ligne commençant par "+key+" devrait contenir une valeur décimale comprise entre 0 et 100");
+							}
+						}
+						break;
+					case Boolean:
+						if(l[1].equals("Y")) {
+							dict.replace(key, 1.0);
+						}
+						else if(l[1].equals("N")) {
+							dict.replace(key, 0.0);
+						}
+						else {
+							throw new ParamException("La ligne commençant par "+key+" devrait contenir soit Y soit N (attention: sensible à la casse)");
+						}
+						break;
+					}
+				}
+			}
+			catch(IOException e) {
+				throw new ParamException(e.getMessage(), e);
+			}
+			finally {
+
+				if(fichierSource!=null)
+					try {
+						fichierSource.close();
+					} catch (IOException e) {}
+
+			}
+			
 		}
 	}
 }
