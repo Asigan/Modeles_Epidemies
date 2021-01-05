@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 public class Parametres {
 	
 	static public enum typesVariables{
@@ -16,6 +18,8 @@ public class Parametres {
 	}
 	
 	protected HashMap<String, Double> dict;
+	protected List<String> keys; //garde l'ordre des variables
+	protected HashMap<String, typesVariables> dictType; //permet de gérer l'affichage dans le fichier en fonction du type. Il existe probablement une méthode plus propre pour cela...
 	protected GestionFichier gfile;
 	
 	private static Parametres instance = null;
@@ -29,30 +33,38 @@ public class Parametres {
 	private Parametres() {
 		gfile = new GestionFichier();
 		dict = new HashMap<String, Double>();
+		dictType = new HashMap<String, typesVariables>();
+		keys = new ArrayList<String>(); 
 		// valeurs censées être des entiers
-		dict.put("S0", 500.0);
-		dict.put("I0", 1.0);
-		dict.put("R0", 0.0);
-		dict.put("Taille du monde", 50.0);
-		// Coefficients
-		dict.put("Beta", 0.01);
-		dict.put("Gamma", 0.16);
-		dict.put("Alpha", 0.5);
-		dict.put("Proportion de Naissances", 0.05);
-		dict.put("Proportion de morts naturelles", 0.025);
+		put("S0", 500.0, typesVariables.Integer);
+		put("E0", 0.0, typesVariables.Integer);
+		put("I0", 1.0, typesVariables.Integer);
+		put("R0", 0.0, typesVariables.Integer);
+		put("Taille du monde", 50.0, typesVariables.Integer);
+		//coefficients
+		put("Beta", 0.01, typesVariables.Coeff);
+		put("Gamma", 0.16, typesVariables.Coeff);
+		put("Alpha", 0.5, typesVariables.Coeff);
+		put("Proportion de Naissances", 0.05, typesVariables.Coeff);
+		put("Proportion de morts naturelles", 0.025, typesVariables.Coeff);
 		// Options:
-		dict.put("Spatialisation", 0.0);
-		dict.put("Dynamiques de population", 0.0);
+		put("Spatialisation", 0.0, typesVariables.Boolean);
+		put("Dynamiques de population", 0.0, typesVariables.Boolean);
 		// politiques publiques
-		dict.put("Confinement", 0.0);
-		dict.put("Seuil confinement", 100.0);
-		dict.put("Port du masque", 0.0);
-		dict.put("Seuil port du masque", 100.0);
-		dict.put("Quarantaine", 0.0);
-		dict.put("Vaccination", 0.0);
+		put("Confinement", 0.0, typesVariables.Pourcentage);
+		put("Seuil confinement", 100.0, typesVariables.Pourcentage);
+		put("Port du masque", 0.0, typesVariables.Pourcentage);
+		put("Seuil port du masque", 100.0, typesVariables.Pourcentage);
+		put("Quarantaine", 0.0, typesVariables.Boolean);
+		put("Vaccination", 0.0, typesVariables.Boolean);
 		
 		
 		
+	}
+	public void put(String key, double value, typesVariables type) {
+		dict.put(key, value);
+		keys.add(key);
+		dictType.put(key, type);
 	}
 	public void regenererFichier(String cheminFichier) throws IOException{
 		gfile.genererFichier(cheminFichier, true);	
@@ -64,15 +76,18 @@ public class Parametres {
 	public void setParametresAvecFichier(String cheminFichier) throws ParamException{
 		gfile.extraireParam(cheminFichier);
 	}
+	public HashMap<String, Double> getParam(){
+		return dict;
+	}
 	protected class GestionFichier {
-		protected final String[] keys = new String[] {"S0","I0","R0","Taille du monde","Beta","Gamma","Alpha","Proportion de Naissances",
+		 = new String[] {"S0","I0","R0","Taille du monde","Beta","Gamma","Alpha","Proportion de Naissances",
 				"Proportion de morts naturelles","Spatialisation", "Dynamiques de population", "Confinement","Seuil confinement",
 				"Port du masque","Seuil port du masque","Quarantaine","Vaccination"};  //sert seulement à garder l'ordre des variables dans le fichier(et que ça paraisse organisé)
-		protected HashMap<String, typesVariables> dictType; //permet de gérer l'affichage dans le fichier. Il existe probablement une méthode plus propre pour cela...
+		
 		GestionFichier(){
 			// type de chaque variables (l'idée est de garder un seul dictionnaire tout en différentiant 
 			// l'affichage et le traitement lors de l'utilisation du fichier par l'utilisateur)
-			dictType = new HashMap<String, typesVariables>();
+			
 			dictType.put("S0", typesVariables.Integer);
 			dictType.put("I0", typesVariables.Integer);
 			dictType.put("R0", typesVariables.Integer);
