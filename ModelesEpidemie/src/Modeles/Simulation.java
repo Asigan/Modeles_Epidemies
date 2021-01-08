@@ -15,7 +15,7 @@ public class Simulation {
 		} catch (ParamException e) {
 			e.printStackTrace();
 		}
-		Modele test = new ModeleSIR();
+		Modele test = new ModeleSEIR();
 		int nbJours = 400;
 		for(int i=0; i<=nbJours; i++) {
 			test.unJour();
@@ -27,5 +27,15 @@ public class Simulation {
 			}
 			System.out.print("\n");
 		}
+	}
+	public static int menu() {
+		int res = 0;
+		while(res<1 && res>4) {
+			
+		}
+		return res;
+	}
+	private static String getUserInput() {
+		
 	}
 }

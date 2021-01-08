@@ -9,13 +9,13 @@ import Population.Personne;
 
 public class ModeleSIR extends Modele{
 	
-	private enum CategoriePopulation{
+	private enum CategoriePopulationSIR{
 		Susceptible(0),
 		Infecte(1),
 		Recupere(2);
 		
 		private int numero;
-		private CategoriePopulation(int numero) {
+		private CategoriePopulationSIR(int numero) {
 			this.numero = numero;
 		}
 		public int getNumero() {
@@ -39,31 +39,31 @@ public class ModeleSIR extends Modele{
 			int cmptInfectes=0;
 			int cmptSusceptibles=0;
 			for(Personne p: caseij) {
-				if(p.getCategorie()==CategoriePopulation.Susceptible.getNumero()) {
+				if(p.getCategorie()==CategoriePopulationSIR.Susceptible.getNumero()) {
 					cmptSusceptibles++;
 				}
-				else if(p.getCategorie()==CategoriePopulation.Infecte.getNumero()) {
+				else if(p.getCategorie()==CategoriePopulationSIR.Infecte.getNumero()) {
 					cmptInfectes++;
 				}
 			}	
 			//infection des personnes susceptibles sur la case	
 			int nbNouveauxInfectes = nbPersonnesAInfecter(cmptSusceptibles, cmptInfectes);
 			transfertCategoriePersonnesSurCase(caseij, nbNouveauxInfectes,
-					CategoriePopulation.Susceptible.getNumero(), CategoriePopulation.Infecte.getNumero());
+					CategoriePopulationSIR.Susceptible.getNumero(), CategoriePopulationSIR.Infecte.getNumero());
 				
 			// Récupération des personnes infectées
 			int nbNouveauxRecuperes = nbPersonnesQuiRecuperent(cmptInfectes);
 			transfertCategoriePersonnesSurCase(caseij, nbNouveauxRecuperes,
-					CategoriePopulation.Infecte.getNumero(), CategoriePopulation.Recupere.getNumero());
-			if(cmptSusceptibles>0 && param.getParam("Vaccination")>0.0) {
-				int nbVaccinesFinal = nbPersonnesVaccinees(cmptSusceptibles);
-				transfertCategoriePersonnesSurCase(caseij, nbVaccinesFinal,
-						CategoriePopulation.Susceptible.getNumero(), CategoriePopulation.Recupere.getNumero());
+					CategoriePopulationSIR.Infecte.getNumero(), CategoriePopulationSIR.Recupere.getNumero());
+			
+			// Vaccination des personnes susceptibles
+			int nbVaccinesFinal = nbPersonnesVaccinees(cmptSusceptibles);
+			transfertCategoriePersonnesSurCase(caseij, nbVaccinesFinal,
+					CategoriePopulationSIR.Susceptible.getNumero(), CategoriePopulationSIR.Recupere.getNumero());
 				
-			}
 			caseij = super.population.getNextCaseOccupee();
 		}
-	}
+					}
 	protected int nbPersonnesAInfecter(int nbSusceptibles, int nbInfectes) {
 		int nbNouveauxInfectes=0;
 		if(nbInfectes>0) {
@@ -113,7 +113,7 @@ public class ModeleSIR extends Modele{
 	public String[] getPopsName() {
 		String[] res = new String[super.population.getPop().size()];
 		int i=0;
-		for(CategoriePopulation t: CategoriePopulation.values()) {
+		for(CategoriePopulationSIR t: CategoriePopulationSIR.values()) {
 			res[i] = t.name();
 			i++;
 		}
