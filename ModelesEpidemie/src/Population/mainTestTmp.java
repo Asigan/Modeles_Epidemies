@@ -6,9 +6,9 @@ public class mainTestTmp {
 		qtes[0]=523;
 		qtes[1]=2;
 		qtes[2]=0;
-		Population pops = new Population(qtes);
+		Population pops = new Population(qtes,1);
 		try {
-			pops.nait();
+			pops.nait(0);
 			pops.meurt(1, 1);
 			pops.changePop(0, 520);
 			System.out.println(pops.getPop(0).size());

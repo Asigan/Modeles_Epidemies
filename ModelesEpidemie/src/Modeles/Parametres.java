@@ -17,9 +17,9 @@ public class Parametres {
 		Boolean,
 	}
 	
-	protected HashMap<String, Double> dict;
-	protected List<String> keys; //garde l'ordre des variables
-	protected HashMap<String, typesVariables> dictType; //permet de gérer l'affichage dans le fichier en fonction du type. Il existe probablement une méthode plus propre pour cela...
+	private HashMap<String, Double> dict;
+	private List<String> keys; //garde l'ordre des variables
+	private HashMap<String, typesVariables> dictType; //permet de gérer l'affichage dans le fichier en fonction du type. Il existe probablement une méthode plus propre pour cela...
 	protected GestionFichier gfile;
 	
 	private static Parametres instance = null;
@@ -56,10 +56,7 @@ public class Parametres {
 		put("Port du masque", 0.0, typesVariables.Pourcentage);
 		put("Seuil port du masque", 100.0, typesVariables.Pourcentage);
 		put("Quarantaine", 0.0, typesVariables.Boolean);
-		put("Vaccination", 0.0, typesVariables.Boolean);
-		
-		
-		
+		put("Vaccination", 0.0, typesVariables.Pourcentage);
 	}
 	public void put(String key, double value, typesVariables type) {
 		dict.put(key, value);
@@ -76,39 +73,11 @@ public class Parametres {
 	public void setParametresAvecFichier(String cheminFichier) throws ParamException{
 		gfile.extraireParam(cheminFichier);
 	}
-	public HashMap<String, Double> getParam(){
-		return dict;
+	public double getParam(String key){
+		return dict.get(key).doubleValue();
 	}
 	protected class GestionFichier {
-		 = new String[] {"S0","I0","R0","Taille du monde","Beta","Gamma","Alpha","Proportion de Naissances",
-				"Proportion de morts naturelles","Spatialisation", "Dynamiques de population", "Confinement","Seuil confinement",
-				"Port du masque","Seuil port du masque","Quarantaine","Vaccination"};  //sert seulement à garder l'ordre des variables dans le fichier(et que ça paraisse organisé)
-		
-		GestionFichier(){
-			// type de chaque variables (l'idée est de garder un seul dictionnaire tout en différentiant 
-			// l'affichage et le traitement lors de l'utilisation du fichier par l'utilisateur)
-			
-			dictType.put("S0", typesVariables.Integer);
-			dictType.put("I0", typesVariables.Integer);
-			dictType.put("R0", typesVariables.Integer);
-			dictType.put("Taille du monde", typesVariables.Integer);
-			//coeffs
-			dictType.put("Beta", typesVariables.Coeff);
-			dictType.put("Gamma", typesVariables.Coeff);
-			dictType.put("Alpha", typesVariables.Coeff);
-			dictType.put("Proportion de Naissances", typesVariables.Coeff);
-			dictType.put("Proportion de morts naturelles", typesVariables.Coeff);
-			//options de simulation
-			dictType.put("Spatialisation",typesVariables.Boolean);
-			dictType.put("Dynamiques de population",typesVariables.Boolean);
-			//politiques publiques
-			dictType.put("Confinement", typesVariables.Pourcentage);
-			dictType.put("Seuil confinement", typesVariables.Pourcentage);
-			dictType.put("Port du masque", typesVariables.Pourcentage);
-			dictType.put("Seuil port du masque", typesVariables.Pourcentage);
-			dictType.put("Quarantaine", typesVariables.Boolean);
-			dictType.put("Vaccination",typesVariables.Boolean);
-		}
+
 		private String genererContenuFichier() {
 			StringBuilder res= new StringBuilder();
 			res.append("Paramètres:\n\nParamètres initiaux\n");
