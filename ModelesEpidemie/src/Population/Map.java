@@ -3,11 +3,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+/**
+ * Classe permettant de gérer la position de la population
+ * @author titouan
+ *
+ */
 public class Map{
 	protected List<List<LinkedList<Personne>>> map;
-	private int colonnes= 0;
-	private int cases=0;
+	private int column= 0;
+	private int line=0;
 	private Random rand = new Random();
+	/**
+	 * 
+	 * @param pop La population qui se déplacera sur la carte
+	 * @param tailleMonde Dimension de la carte = tailleMonde*tailleMonde
+	 */
 	public Map(Population pop, int tailleMonde) {
 		map = new ArrayList<List<LinkedList<Personne>>>();
 		for(int i=0; i<tailleMonde; i++) {
@@ -24,23 +34,44 @@ public class Map{
 			}
 		}
 	}
-	public int getTailleMap() {
+	/**
+	 * Renvoie la largeur/longueur de la carte (largeur = longueur)
+	 * @return
+	 */
+	public int getSizeMap() {
 		return map.size();
 	}
+	/**
+	 * 
+	 * @param x Numéro de colonne
+	 * @param y Numéro de ligne
+	 * @return
+	 */
 	public LinkedList<Personne> getCase(int x, int y){
-		// on ne veut pas permettre la modification de la liste, donc on en 
-		// envoie une shallow copy
 		return map.get(x).get(y);
 	}
-	
+	/**
+	 * Retire une personne de la carte
+	 * @param p La personne à retirer
+	 * @return
+	 */
 	public boolean remove(Personne p) {
 		return getCase(p.getPosX(),p.getPosY()).remove(p);
 	}
-	
+	/**
+	 * Ajoute une personne sur la carte, aux coordonnées
+	 * stockées dans l'objet Personne envoyé
+	 * @param p La personne à ajouter
+	 */
 	public void add(Personne p) {
 		getCase(p.getPosX(), p.getPosY()).add(p);
 	}
-	
+	/**
+	 * Ajoute une personne sur la carte
+	 * @param p La personne à ajouter
+	 * @param randomPlacement : coordonnées aléatoires si true(change les coordonnées
+	 * de l'objet Personne), coordonnées stockées dans l'objet Personne si false
+	 **/
 	public void add(Personne p, boolean randomPlacement) {
 		if(randomPlacement) {
 			int	posX = rand.nextInt(map.size());
@@ -49,19 +80,25 @@ public class Map{
 		}
 		add(p);
 	}
-	public LinkedList<Personne> getNextCase(){
-		if(cases>=map.get(colonnes).size()) {
-			cases=0;
-			colonnes++;
+	/**
+	 * Renvoie la prochaine case (correspondant à une liste de Personne)
+	 * (null si la case précédente était la dernière case, puis revient à 
+	 * la première case)
+	 * @return
+	 */
+	public LinkedList<Personne> getCaseSuivante(){
+		if(line>=map.get(column).size()) {
+			line=0;
+			column++;
 		}
 		LinkedList<Personne> res =null;
-		if(colonnes<map.size()) {
+		if(column<map.size()) {
 			
-			res = map.get(colonnes).get(cases);
-			cases++;
+			res = map.get(column).get(line);
+			line++;
 		}
 		else {
-			colonnes=0;
+			column=0;
 		}
 		return res;
 		

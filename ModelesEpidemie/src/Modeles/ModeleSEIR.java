@@ -3,8 +3,17 @@ package Modeles;
 import java.util.LinkedList;
 
 import Population.Personne;
-
+/**
+ * Modèle épidémiologique SEIR
+ * @author titouan
+ *
+ */
 public class ModeleSEIR extends Modele {
+	/**
+	 * Catégories de population du modèle épidémiologique SEIR
+	 * @author titouan
+	 *
+	 */
 	private enum CategoriePopulationSEIR{
 		Susceptible(0),
 		Exposed(1),
@@ -15,19 +24,28 @@ public class ModeleSEIR extends Modele {
 		private CategoriePopulationSEIR(int numero) {
 			this.numero = numero;
 		}
+		/**
+		 * 
+		 * @return Le numéro correspondant à la catégorie de population
+		 */
 		public int getNumero() {
 			return this.numero;
 		}
 	};
 	static Parametres param = Parametres.getInstance();
-
+	/**
+	 * 
+	 */
 	public ModeleSEIR() {
 		super(new int[] {(int)param.getParam("S0"), (int)param.getParam("E0"), (int)param.getParam("I0"), (int)param.getParam("R0")});
 	}
-
+	/**
+	 * Mécaniques de transmissions d'une population à l'autre
+	 * dépendantes du modèle SEIR (Expositions, Infections, récupérations, vaccinations)
+	 */
 	@Override
 	protected void transmission() {
-		LinkedList<Personne> caseij = super.population.getNextCaseOccupee();
+		LinkedList<Personne> caseij = super.population.getCaseOccupeeSuivante();
 		while(caseij!=null) {
 			
 			int susceptiblesCounter=0;
@@ -53,7 +71,7 @@ public class ModeleSEIR extends Modele {
 			transfertCategoriePersonnesSurCase(caseij, recoveredNb,
 					CategoriePopulationSEIR.Infectious.getNumero(), CategoriePopulationSEIR.Recovered.getNumero()); 
 			
-			int infectedNb = infectedPeople(exposedCounter);
+			int infectedNb = infectiousPeople(exposedCounter);
 			transfertCategoriePersonnesSurCase(caseij, infectedNb,
 					CategoriePopulationSEIR.Exposed.getNumero(), CategoriePopulationSEIR.Infectious.getNumero()); 
 			
@@ -61,10 +79,15 @@ public class ModeleSEIR extends Modele {
 			transfertCategoriePersonnesSurCase(caseij, exposedNb,
 					CategoriePopulationSEIR.Susceptible.getNumero(), CategoriePopulationSEIR.Exposed.getNumero());
 			
-			caseij = super.population.getNextCaseOccupee();
+			caseij = super.population.getCaseOccupeeSuivante();
 		}
 	}
-	
+	/**
+	 * Calcule le nombre de personnes infectées dans la journée dans le cluster
+	 * @param susceptiblesNb Nombre de personnes susceptibles d'être contaminées
+	 * @param infectiousNb Nombre de personnes déjà infectées
+	 * @return Nombre de personnes exposées
+	 */
 	protected int exposedPeople(int susceptiblesNb, int infectiousNb) {
 		int exposedNb = 0;
 		if(susceptiblesNb>0 && infectiousNb>0 && param.getParam("Quarantaine")==0.0) {
@@ -75,7 +98,12 @@ public class ModeleSEIR extends Modele {
 		}
 		return exposedNb;
 	}
-	protected int infectedPeople(int exposedNb) {
+	/**
+	 * Calcule le nombre de personnes terminant leur période d'incubation dans le cluster
+	 * @param exposedNb Nombre de personnes en période d'incubation
+	 * @return Nombre de personnes ayant fini leur période d'incubation
+	 */
+	protected int infectiousPeople(int exposedNb) {
 		int infectedNb = 0;
 		if(exposedNb>0) {
 			double alpha = param.getParam("Alpha");
@@ -83,6 +111,11 @@ public class ModeleSEIR extends Modele {
 		}
 		return infectedNb;
 	}
+	/**
+	 * Calcule le nombre de personnes ayant récupéré de l'infection dans le cluster
+	 * @param infectiousNb Nombre de personnes actuellement infectées dans le cluster
+	 * @return Nombre de personnes venant de récupérer de l'infection
+	 */
 	protected int recoveredPeople(int infectiousNb) {
 		int recoveredNb = 0;
 		if(infectiousNb>0) {
@@ -91,6 +124,11 @@ public class ModeleSEIR extends Modele {
 		}
 		return recoveredNb;
 	}
+	/**
+	 * Calcule le nombre de personnes allant se faire vacciner dans la journée parmi la population
+	 * @param susceptiblesNb Nombre de personnes susceptibles d'être infectées dans le cluster
+	 * @return Le nombre de personnes se faisant vacciner dans la journée parmi les personnes susceptibles du cluster
+	 */
 	protected int vaccinatedPeople(int susceptiblesNb) {
 		int vaccinatedNb = 0;
 		if(susceptiblesNb>0 && param.getParam("Vaccination")>0.0) {
@@ -100,12 +138,18 @@ public class ModeleSEIR extends Modele {
 		return vaccinatedNb;
 	}
 	
-	
+	/**
+	 * Simulation d'un jour pour la population (à appeler pour faire une simulation)
+	 */
 	@Override
 	public void unJour() {
 		super.unJour();
 		transmission();
 	}
+	/**
+	 * 
+	 * @return Le nombre de personne dans chaque catégorie de population
+	 */
 	@Override
 	public int[] getPopsNumbers() {
 		int[] res = new int[super.population.getPop().size()];
@@ -114,7 +158,10 @@ public class ModeleSEIR extends Modele {
 		}
 		return res;
 	}
-	
+	/**
+	 * 
+	 * @return Le nom de chaque catégorie de population
+	 */
 	@Override
 	public String[] getPopsName() {
 		String[] res = new String[super.population.getPop().size()];
@@ -124,5 +171,13 @@ public class ModeleSEIR extends Modele {
 			i++;
 		}
 		return res;
+	}
+	/**
+	 * 
+	 * @return Une nouvelle instance du modèle
+	 */
+	@Override
+	public Modele reinit() {
+		return new ModeleSEIR();
 	}
 }
