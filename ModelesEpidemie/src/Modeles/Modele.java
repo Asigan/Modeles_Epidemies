@@ -64,11 +64,10 @@ abstract public class Modele {
 		for(List<Personne> pop: pops) {
 			for(Personne p: pop) {
 				boolean personneSeDeplace = true;
-				if(param.getParam("Seuil confinement")>100*pop.size()/popTotale) {
-					if(rand.nextDouble()*100<param.getParam("Confinement")) {
-						personneSeDeplace=false;
-					}
+				if(rand.nextDouble()*100<param.getParam("Confinement")) {
+					personneSeDeplace=false;
 				}
+
 				if(personneSeDeplace) {
 					int direction = rand.nextInt(5);
 					int newPosX=p.getPosX();

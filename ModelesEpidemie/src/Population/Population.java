@@ -9,8 +9,8 @@ import java.util.List;
  *
  */
 public class Population {
-	private List<List<Personne>> population= new ArrayList<List<Personne>>();
-	private Map map;
+	protected List<List<Personne>> population= new ArrayList<List<Personne>>();
+	protected Map map;
 	/**
 	 * 
 	 * @param popQte Le nombre de personnes dans chaque partie de la population
@@ -18,13 +18,29 @@ public class Population {
 	 */
 	
 	public Population(int[] popQte, int tailleMonde) {
+		initPop(popQte);
+		initMap(tailleMonde);
+	}
+	/**
+	 * Permet de (ré)initialiser la liste des personnes. N'est appelé que par le constructeur
+	 * Redéfinir cette fonction pour utiliser une classe fille de Personne.
+	 * @param popQte
+	 */
+	protected void initPop(int[] popQte) {
 		for(int i=0; i<popQte.length;i++) {
 			population.add(new ArrayList<Personne>());
 			for(int j=0; j<popQte[i]; j++) {
 				population.get(i).add(new Personne(i));
 			}
 		}
-		map = new Map(this, tailleMonde);
+	}
+	/**
+	 * Permet de (ré)initialiser la map. N'est appelé que par le constructeur
+	 * Permet cette fonction pour utiliser une classe fille de Map.
+	 * @param taille
+	 */
+	protected void initMap(int taille) {
+		map = new Map(this, taille);
 	}
 	/**
 	 * Renvoie le nombre de personnes total stockées dans l'objet

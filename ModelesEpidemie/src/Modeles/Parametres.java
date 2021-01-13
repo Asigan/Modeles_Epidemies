@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 public class Parametres {
 	
-	static public enum typesVariables{
+	static public enum TypesVariables{
 		Integer,
 		Coeff,
 		Pourcentage,
@@ -19,7 +19,7 @@ public class Parametres {
 	
 	private HashMap<String, Double> dict;
 	private List<String> keys; //garde l'ordre des variables
-	private HashMap<String, typesVariables> dictType; //permet de gérer l'affichage dans le fichier en fonction du type. Il existe probablement une méthode plus propre pour cela...
+	private HashMap<String, TypesVariables> dictType; //permet de gérer l'affichage dans le fichier en fonction du type. Il existe probablement une méthode plus propre pour cela...
 	protected GestionFichier gfile;
 	
 	private static Parametres instance = null;
@@ -37,29 +37,28 @@ public class Parametres {
 	private Parametres() {
 		gfile = new GestionFichier();
 		dict = new HashMap<String, Double>();
-		dictType = new HashMap<String, typesVariables>();
+		dictType = new HashMap<String, TypesVariables>();
 		keys = new ArrayList<String>(); 
 		// valeurs censées être des entiers
-		put("S0", 500.0, typesVariables.Integer);
-		put("E0", 0.0, typesVariables.Integer);
-		put("I0", 1.0, typesVariables.Integer);
-		put("R0", 0.0, typesVariables.Integer);
-		put("Taille du monde", 10.0, typesVariables.Integer);
+		put("S0", 500.0, TypesVariables.Integer);
+		put("E0", 0.0, TypesVariables.Integer);
+		put("I0", 1.0, TypesVariables.Integer);
+		put("R0", 0.0, TypesVariables.Integer);
+		put("Taille du monde", 10.0, TypesVariables.Integer);
 		//coefficients
-		put("Beta", 0.01, typesVariables.Coeff);
-		put("Gamma", 0.16, typesVariables.Coeff);
-		put("Alpha", 0.1, typesVariables.Coeff);
-		put("Proportion de Naissances", 0.0005, typesVariables.Coeff);
-		put("Proportion de morts naturelles", 0.0004, typesVariables.Coeff);
+		put("Beta", 0.01, TypesVariables.Coeff);
+		put("Gamma", 0.16, TypesVariables.Coeff);
+		put("Alpha", 0.1, TypesVariables.Coeff);
+		put("Proportion de Naissances", 0.0005, TypesVariables.Coeff);
+		put("Proportion de morts naturelles", 0.0004, TypesVariables.Coeff);
 		// Options:
-		put("Spatialisation", 0.0, typesVariables.Boolean);
-		put("Dynamiques de population", 0.0, typesVariables.Boolean);
+		put("Spatialisation", 0.0, TypesVariables.Boolean);
+		put("Dynamiques de population", 0.0, TypesVariables.Boolean);
 		// politiques publiques
-		put("Confinement", 0.0, typesVariables.Pourcentage);
-		put("Seuil confinement", 100.0, typesVariables.Pourcentage);
-		put("Port du masque", 0.0, typesVariables.Pourcentage);
-		put("Quarantaine", 0.0, typesVariables.Boolean);
-		put("Vaccination", 0.0, typesVariables.Pourcentage);
+		put("Confinement", 0.0, TypesVariables.Pourcentage);
+		put("Port du masque", 0.0, TypesVariables.Pourcentage);
+		put("Quarantaine", 0.0, TypesVariables.Boolean);
+		put("Vaccination", 0.0, TypesVariables.Pourcentage);
 	}
 	/**
 	 * Ajoute un nouveau paramètre
@@ -67,7 +66,7 @@ public class Parametres {
 	 * @param value Valeur du paramètre
 	 * @param type La façon dont doit être représentée le paramètre pour l'utilisateur (Integer, Coeff, Pourcentage ou Boolean)
 	 */
-	public void put(String key, double value, typesVariables type) {
+	public void put(String key, double value, TypesVariables type) {
 		dict.put(key, value);
 		keys.add(key);
 		dictType.put(key, type);
