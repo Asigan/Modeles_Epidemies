@@ -1,0 +1,19 @@
+Paramètres:
+
+Paramètres initiaux
+S0: 6250
+E0: 0
+I0: 8
+R0: 1
+Taille du monde: 8
+Beta: 0.008
+Gamma: 0.12
+Alpha: 0.12
+Proportion de Naissances: 5.0E-4
+Proportion de morts naturelles: 4.0E-4
+Spatialisation(Y/N): Y
+Dynamiques de population(Y/N): Y
+Confinement(%): 0.1
+Port du masque(%): 20.0
+Quarantaine(Y/N): N
+Vaccination(%): 0.5
